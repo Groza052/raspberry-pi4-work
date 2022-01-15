@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=nextion
+Comment=
+Exec=sudo python3 /home/pi/complited/async_next.py
+Terminal=false
+Type=Application

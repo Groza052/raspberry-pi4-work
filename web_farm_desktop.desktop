@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=web_farm
+Comment=
+Exec=sudo python3 /home/pi/complited/web/app.py
+Terminal=false
+Type=Application
