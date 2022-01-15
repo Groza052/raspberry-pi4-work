@@ -1,0 +1,46 @@
+<html>
+<head>
+    
+    <meta http-equiv="refresh" content="10">
+    <title>СитиФерма_Жиров_5</title>
+
+</head>
+    <body>
+
+        <form method="post" action="/">
+		<p>Температура: {{ temperature }}°C</p>
+		<p>Влажность: {{ humidity }}%</p>
+		<p>CO2: {{ co }}ppm</p>
+                <p>Дата: {{ tt }}</p>
+		<p>   </p>
+		<br>
+		<p>{{ message_pump }}</p>
+                <input type="submit" value="Насос вкл." name="Насос вкл." />
+                <input type="submit" value="Насос выкл." name="Насос выкл." />
+		<p>   </p>
+		<br>
+		<p>{{ message_light }}</p>
+		<input type="submit" value="Свет вкл." name="Свет вкл."/>
+                <input type="submit" value="Свет выкл." name="Свет выкл." />
+		<p>   </p>
+		<br>
+		<p>{{ message_res }}</p>
+		<input type="submit" value="Свет 2/3 вкл." name="Свет 2/3 вкл."/>
+                <input type="submit" value="Свет 2/3 выкл." name="Свет 2/3 выкл." />
+		<p>   </p>
+		<br>
+		<p>{{ message_ma }}</p>
+		<input type="submit" value="Автомат" name="Автомат"/>
+                <input type="submit" value="Ручной" name="Ручной" />
+		<p>   </p>
+		<br>
+		<p>{{ message_her }}</p>
+		<p>   </p>
+		<br>
+		<p>{{ message_her1 }}</p>
+
+
+            </div>
+        </form>
+    </body>
+</html>
