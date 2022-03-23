@@ -10,7 +10,7 @@ her_pin=16
 her1_pin=13
 l = 0
 mm = 0
-
+# man_aut=True
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pump_pin, GPIO.OUT,initial=GPIO.HIGH)
 GPIO.setup(light_pin, GPIO.OUT,initial=GPIO.HIGH)
@@ -44,6 +44,7 @@ def index():
     co = shared.get('Value2')
     tt = shared.get('Value3')
     man_aut = shared.get('Value4')
+    print(man_aut)
     print(co)
     print(tt)
     if request.method == 'POST':
@@ -82,8 +83,10 @@ def index():
             # return render_template("index.html")
         print("No Post Back Call")
     if man_aut==True:
+        print(man_aut)
         message_ma = 'Ручной'
     else:
+        print(man_aut)
         message_ma = 'Автомат'
     if GPIO.input(pump_pin):
         message_pump = 'Насос выключен'
