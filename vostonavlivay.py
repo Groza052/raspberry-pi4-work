@@ -216,7 +216,8 @@ async def temp():
             continue
         except Exception as error:
             dhtDevice.exit()
-            raise error
+            pass
+#            raise error
 #        time.sleep(2.0)
 
 
