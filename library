@@ -3,6 +3,7 @@ delite serial instal pyserial
 py serial-asyncio
 python3-memcached
 https://utyatnishna.ru/info/338301/how-to-share-variables-across-scripts-in-python
-sudo apt-get install memcached python-memcache
+sudo apt-get install memcached python-memcache (no work)
+sudo apt-get install memcached python3-memcache (work demon)
 libres instal ADS1115 cherez meneger paketov
 https://programmersought.com/article/92047061453/   потом перезагрузить.
