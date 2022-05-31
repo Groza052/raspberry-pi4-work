@@ -20,9 +20,16 @@ light_pin=20
 res_pin=21
 her_pin=16
 her1_pin=13
+one_pin=16
+two_pin=19
+three_pin=12
+four_pin=6
 temperature = 0
 humidity = 0
 c = 0
+T=0
+TDS=0
+PH=0
 l = 0
 tt = 0
 ttt = 0
@@ -44,6 +51,10 @@ GPIO.setup(light_pin, GPIO.OUT,initial=GPIO.HIGH)
 GPIO.setup(res_pin, GPIO.OUT,initial=GPIO.HIGH)
 GPIO.setup(her_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(her1_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(one_pin, GPIO.OUT,initial=GPIO.HIGH)
+GPIO.setup(two_pin, GPIO.OUT,initial=GPIO.HIGH)
+GPIO.setup(three_pin, GPIO.OUT,initial=GPIO.HIGH)
+GPIO.setup(four_pin, GPIO.OUT,initial=GPIO.HIGH)
 # Initial the dht device, with data pin connected to:
 dhtDevice = adafruit_dht.DHT22(board.D17,False)
 from nextion import Nextion, EventType
@@ -67,12 +78,15 @@ client = Nextion('/dev/ttyAMA1', 9600, event_handler)
 async def date():
     global n0
     global n1
+    global n2
+    global n3
+    global n4
+    global n5
     global flag_man_aut
+    global screen
     while True:
-        global flag_man_aut
         await asyncio.sleep(5)
-        global flag_man_aut
-        screen=await client.get('dp')
+        screen = await client.get('dp')
         if screen ==1: 
             n0=await client.get('n0.val')
             n1=await client.get('n1.val')
@@ -82,7 +96,7 @@ async def date():
             n5=await client.get('n5.val')
             print(n0)
             print(n1)
-            print('flag =',flag_man_aut)
+            #print('flag =',flag_man_aut)
         if flag_man_aut==False:
             print('jg')
             l = datetime.now().strftime('%H')
@@ -107,11 +121,11 @@ async def date():
                     GPIO.output(light_pin, False)
                     GPIO.output(res_pin, False)
                 else:
-                    GPIO.output(light_pin, False)
-                    GPIO.output(res_pin, False)
+                    GPIO.output(light_pin, True)
+                    GPIO.output(res_pin, True)
             else:
-                GPIO.output(light_pin, False)
-                GPIO.output(res_pin, False)
+                GPIO.output(light_pin, True)
+                GPIO.output(res_pin, True)
 #             if ttt == 10:
 #                 if tttt>= str(10):
 #                     if tttt <= str(13):
@@ -147,35 +161,32 @@ async def temp():
     while True:
         try:
             await asyncio.sleep(2)
-            temperature = dhtDevice.temperature
-            temperature_f = temperature * (9 / 5) + 32
-            humidity = dhtDevice.humidity
+            temperature=shared.get('Value')
+            humidity=shared.get('Value1')
+            c=shared.get('Value2')
+            TDS=shared.get('Value5')
+            PH=shared.get('Value6')
+            T=shared.get('Value7')
+            T=str(T)
+            PH=str(PH)
+            TDS=str(TDS)
             screen=await client.get('dp')
             print(screen)
             if screen ==0 or screen==1:
                 await client.set('t0.txt', "%.1f" % (dhtDevice.temperature))
                 await client.set('t1.txt', "%.1f" % (dhtDevice.humidity))
-#             mtime = await client.get('n0.val')
-#             print (mtime)
-                print("Temp: {:.1f} F / {:.1f} C    Humidity: {}% ".format(temperature_f, temperature, humidity))
-                
-                c=mh_z19.read()
-                c=str(c)
-                c=c[8:]
-                c=c[:-1]
+
                 te=temperature
                 ce=int(c)
                 tt=datetime.now().strftime('%b %d  %H:%M:%S\n')
                 print(c)
                 print(tt)
-                shared = memcache.Client(['127.0.0.1:11211'], debug=0)
-                shared.set('Value', temperature)
-                shared.set('Value1', humidity)
-                shared.set('Value2', c)
                 shared.set('Value3', tt)
                 await client.set('t2.txt',c)
                 await client.set('t3.txt',tt)
-                
+                await client.set('t25.txt',T)
+                await client.set('t24.txt',PH)
+                await client.set('t22.txt',TDS)
                 if GPIO.input(her1_pin):
                      await client.set('t8.pco',50712)
                      await client.set('t8.bco',50712)
@@ -216,8 +227,7 @@ async def temp():
             continue
         except Exception as error:
             dhtDevice.exit()
-            pass
-#            raise error
+            raise error
 #        time.sleep(2.0)
 
 
@@ -258,24 +268,26 @@ async def reading():
 #                 await client.set('qr0.txt',adr)
 async def relay():
     global flag_man_aut
+    global flag_event
+    global device_id
+    global screen
     print('d')
     while True:
         await asyncio.sleep(1/100)
-        global flag_man_aut
-        global flag_event
-        global device_id
-        flag_man_aut=shared.get('Value4')    
+        if shared.get('Value4')==1:
+            flag_man_aut=shared.get('Value4')   
         screen=await client.get('dp')
         if screen==1:
-            flag_man_aut=True
- #           print('flag =', flag_man_aut)
-            shared.set('Valye4',flag_man_aut)
-            flag_event=False
+            flag_man_aut=False 
+            shared.set('Value4',flag_man_aut)
+            #flag_event=False
         else:
-            print('reset')
-            flag_man_aut=False
-            shared.set('Valye4',flag_man_aut)
-            flag_event=False
+          #  print('reset')
+            flag_man_aut=True
+            shared.set('Value4',flag_man_aut)
+            #print('flag =', flag_man_aut)
+            #flag_event=False
+         
         if flag_event == True:
             if device_id == 1:
                 print('nn')
@@ -303,6 +315,23 @@ async def relay():
                 else:
                     GPIO.output(light_pin, True)
                     flag_event = False
+            if device_id == 36 :
+                
+                print('nn')
+                GPIO.output(one_pin, False)
+                sleep(1)
+                GPIO.output(one_pin, True)
+                GPIO.output(two_pin, False)
+                sleep(1)
+                GPIO.output(two_pin, True)
+                GPIO.output(three_pin, False)
+                sleep(1)
+                GPIO.output(three_pin, True)
+                GPIO.output(four_pin, False)
+                sleep(1)
+                GPIO.output(four_pin, True)
+                flag_event = False
+                
             if device_id == 2:
                 print('nn')
                 if await client.get('bt1.val')==1:

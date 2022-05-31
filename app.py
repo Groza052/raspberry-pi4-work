@@ -8,6 +8,10 @@ light_pin=20
 res_pin=21
 her_pin=16
 her1_pin=13
+one_pin=16
+two_pin=19
+three_pin=12
+four_pin=6
 l = 0
 mm = 0
 # man_aut=True
@@ -17,6 +21,10 @@ GPIO.setup(light_pin, GPIO.OUT,initial=GPIO.HIGH)
 GPIO.setup(res_pin, GPIO.OUT,initial=GPIO.HIGH)
 GPIO.setup(her_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(her1_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(one_pin, GPIO.OUT,initial=GPIO.HIGH)
+GPIO.setup(two_pin, GPIO.OUT,initial=GPIO.HIGH)
+GPIO.setup(three_pin, GPIO.OUT,initial=GPIO.HIGH)
+GPIO.setup(four_pin, GPIO.OUT,initial=GPIO.HIGH)
 shared = memcache.Client(['127.0.0.1:11211'], debug=0)
 
 
@@ -44,6 +52,9 @@ def index():
     co = shared.get('Value2')
     tt = shared.get('Value3')
     man_aut = shared.get('Value4')
+    TDS = man_aut = shared.get('Value5')
+    PH = man_aut = shared.get('Value6')
+    T = man_aut = shared.get('Value7')
     print(man_aut)
     print(co)
     print(tt)
@@ -68,10 +79,42 @@ def index():
             GPIO.output(res_pin, True)    # pass # do something else
             mm = 0
             print("Резерв выкл.")
+        elif request.form.get('on1') == 'on1':
+            GPIO.output(one_pin, False)
+            mm = 1
+            print("1")
+        elif request.form.get('off1') == 'off1':
+            GPIO.output(one_pin, True)    # pass # do something else
+            mm = 0
+            print("1")
+        elif request.form.get('on2') == 'on2':
+            GPIO.output(two_pin, False)
+            mm = 1
+            print("2")
+        elif request.form.get('off2') == 'off2':
+            GPIO.output(two_pin, True)    # pass # do something else
+            mm = 0
+            print("2")
+        elif request.form.get('on3') == 'on3':
+            GPIO.output(three_pin, False)
+            mm = 1
+            print("3")
+        elif request.form.get('off3') == 'off3':
+            GPIO.output(three_pin, True)    # pass # do something else
+            mm = 0
+            print("3")
+        elif request.form.get('on4') == 'on4':
+            GPIO.output(four_pin, False)
+            mm = 1
+            print("4")
+        elif request.form.get('off4') == 'off4':
+            GPIO.output(four_pin, True)    # pass # do something else
+            mm = 0
+            print("4")
         elif request.form.get('Автомат') == 'Автомат':
             shared.set('Value4',False)
             print("Автомат")
-        elif  request.form.get('Ручной') == 'Ручной':
+        elif request.form.get('Ручной') == 'Ручной':
             shared.set('Value4',True)
             print("Ручной")
 
@@ -100,6 +143,22 @@ def index():
         message_res = 'Свет 2/3 этаж выкл.'
     else:
         message_res = 'Свет 2/3 этаж вкл.'
+    if GPIO.input(one_pin):
+        message_one = 'Реле 1 выключено'
+    else:
+        message_one = 'Реле 1 включено'
+    if GPIO.input(two_pin):
+        message_two = 'Реле 2 выключено'
+    else:
+        message_two = 'Реле 2 включено'
+    if GPIO.input(three_pin):
+        message_three = 'Реле 3 выключено'
+    else:
+        message_three = 'Реле 3 включено'
+    if GPIO.input(four_pin):
+        message_four = 'Реле 4 выключено'
+    else:
+        message_four = 'Реле 4 включено'
     if GPIO.input(her_pin):
         message_her = ''
     else:
@@ -108,7 +167,7 @@ def index():
         message_her1 = ''
     else:
         message_her1 = 'Уровень низок'
-    return render_template("index.html",temperature=temperature,humidity=humidity,message_pump=message_pump,message_light=message_light,message_res=message_res,co=co,tt=tt,message_ma=message_ma,message_her=message_her,message_her1=message_her1)
+    return render_template("index.html", TDS=TDS, PH=PH, T=T, message_four=message_four,message_three=message_three,message_two=message_two,message_one=message_one,temperature=temperature,humidity=humidity,message_pump=message_pump,message_light=message_light,message_res=message_res,co=co,tt=tt,message_ma=message_ma,message_her=message_her,message_her1=message_her1)
 
 
 if __name__ == '__main__':
