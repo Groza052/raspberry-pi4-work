@@ -1,0 +1,37 @@
+import ADS1115
+import time
+import board
+import adafruit_dht
+import mh_z19
+from datetime import datetime
+ads = ADS1115.ADS1115()
+dhtDevice = adafruit_dht.DHT22(board.D17,False)
+
+while True:
+    try:
+#         volt0 = ads.readADCSingleEnded()
+#         volt1 = ads.readADCSingleEnded(1)
+#         volt2 = ads.readADCSingleEnded(2)
+#         volt3 = ads.readADCSingleEnded(3)
+        temperature = dhtDevice.temperature
+        humidity = dhtDevice.humidity
+        tt=datetime.now().strftime('%b %d  %H:%M:%S\n')
+        c=mh_z19.read()
+        c=str(c)
+        c=c[8:]
+        c=c[:-1]
+#         TDS=int((4400/5000)*volt0)
+#         PH =int((14/5000)*volt1)
+#         T=int(((100/5000)*volt2)-20)
+#         print (TDS,PH,T)
+        print(temperature)
+        print(humidity)
+        print(c)
+        print(tt)
+    except RuntimeError as error:
+
+            continue
+    except Exception as error:
+            dhtDevice.exit()
+            raise error
+    time.sleep(2.0) 
